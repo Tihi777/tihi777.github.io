@@ -17,55 +17,45 @@
     }
 </style>
 <body>
-<div id="canvas"></div>
-<script type="x-shader/x-vertex" id="vertexShaderDEBRIS">
-		attribute float base_angle;
-		attribute float offsetX;
-		attribute float offsetZ;
+    <script id="vertexShader" type="x-shader/x-vertex">
+      varying vec3 vPos;
 
-		uniform vec3 stretch;
-		uniform float time;
+      void main() {
+        vPos = position;
+        vec3 viewPosition = (modelViewMatrix * vec4(position, 1.)).xyz;
+        gl_Position = projectionMatrix * vec4(viewPosition, 1.);
+      }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-fragment">
+      uniform sampler2D texture;
+      uniform float innerRadius;
+      uniform float outerRadius;
 
-		varying vec4 vUv;
-		varying vec2 offset;
-		void main()
-		{
-		    vec3 p = position;
-		   	offset = vec2(offsetX, offsetZ);
-	        p.x = (stretch.x + offsetX)*cos( base_angle + time );
-	        p.z = (stretch.z + offsetZ)*sin( base_angle + time );
-	        p.y += (stretch.y + offsetX/10.0)*cos( base_angle + time );
+      varying vec3 vPos;
 
-			gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+      vec4 color() {
+        vec2 uv = vec2(0);
+        uv.x = (length(vPos) - innerRadius) / (outerRadius - innerRadius);
+        if (uv.x < 0.0 || uv.x > 1.0) {
+          discard;
+        }
 
-		    vUv = projectionMatrix * vec4(p, 1.0);
-		    gl_PointSize = 1.0;
-		}
-		</script>
-<script type="x-shader/x-fragment" id="fragmentShaderDEBRIS">
-		varying vec4 vUv;
-		varying vec2 offset;
+        vec4 pixel = texture2D(texture, uv);
+        return pixel;
+      }
 
-		uniform float shadowType;
-
-		void main() {
-			if( abs(offset.x) >= 30.0 || abs(offset.y) >= 10.0)
-				gl_FragColor = vec4(0.7, 0.7, 0.65, 0.90);
-			else
-				gl_FragColor = vec4(0.58, 0.49, 0.45, 0.90);
-
-			if((shadowType == 0.0 && vUv.z > 0.0) || (shadowType == 1.0 && vUv.z > 0.0 && abs(vUv.x) < 64.0))
-				gl_FragColor = gl_FragColor - vec4(vUv.zzz*0.0076, 0.0);
-
-		}
-		</script>
-<script src="js/dat.gui.min.js"></script>
-<script src="js/three.module.js"></script>
-<script src="js/three.js"></script>
-<script src="js/three.min.js"></script>
-<script src="js/OrbitControls.js"></script>
-<script src="src/planetData.js"></script>
-<script src="src/satelliteData.js"></script>
-<script src="src/main.js"></script>
+      void main() {
+        gl_FragColor = color();
+      }
+    </script>
+    <div id="canvas"></div>
+    <script src="js/dat.gui.min.js"></script>
+    <script src="js/three.module.js"></script>
+    <script src="js/three.js"></script>
+    <script src="js/three.min.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="src/planetData.js"></script>
+    <script src="src/satelliteData.js"></script>
+    <script src="src/main.js"></script>
 </body>
 </html>

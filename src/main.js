@@ -96,6 +96,40 @@ const loadTexturedPlanet = (myData, x, y, z, myMaterialType) => {
     return myPlanet;
 }
 
+const createRings = (innerRadius, outerRadius, size, texture, name, distanceFromAxis) => {
+    const geometry = new THREE.RingGeometry(innerRadius, outerRadius, size);
+    const ringTexture = new THREE.TextureLoader().load(texture);
+    const material = new THREE.ShaderMaterial({
+        uniforms: {
+            texture: { value: ringTexture },
+            innerRadius: { value: innerRadius },
+            outerRadius: { value: outerRadius }
+        },
+        vertexShader: document.getElementById( 'vertexShader' ).textContent,
+        fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
+        side: THREE.DoubleSide,
+        transparent: true
+    });
+    const saturnRings = new THREE.Mesh(geometry, material);
+    saturnRings.name = name;
+    saturnRings.position.set(distanceFromAxis, 0, 0);
+    saturnRings.rotation.x = Math.PI / 2;
+    saturnRings.rotation.y = - Math.PI / 8;
+    scene.add(saturnRings)
+    return saturnRings;
+}
+
+const getSaturnRing = (saturnData) => {
+    return createRings(
+        saturnData.rings.innerRadius,
+        saturnData.rings.outerRadius,
+        saturnData.rings.size,
+        "img/planets/saturnRings.png",
+        "Saturn rings",
+        saturnData.distanceFromAxis,
+    );
+}
+
 const getEllipse = (x, y, size, color, name, distanceFromAxis) => {
     const curve = new THREE.EllipseCurve(
         x,  y,
@@ -136,13 +170,14 @@ function init() {
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.antialias = true;
 
     canvas = document.getElementById('canvas');
     canvas.appendChild(renderer.domElement);
 
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.minDistance = 2;
+
     controls.maxDistance = 999;
 
     const path = 'img/cubemap/';
@@ -174,6 +209,7 @@ function init() {
     const mars = loadTexturedPlanet(marsData, marsData.distanceFromAxis, 0, 0);
     const jupiter = loadTexturedPlanet(jupiterData, jupiterData.distanceFromAxis, 0, 0);
     const saturn = loadTexturedPlanet(saturnData, saturnData.distanceFromAxis, 0, 0);
+    const saturnRings = getSaturnRing(saturnData);
     const uranus = loadTexturedPlanet(uranusData, uranusData.distanceFromAxis, 0, 0);
     const neptune = loadTexturedPlanet(neptuneData, neptuneData.distanceFromAxis, 0, 0);
     const pluto = loadTexturedPlanet(plutoData, plutoData.distanceFromAxis, 0, 0);
@@ -193,7 +229,6 @@ function init() {
     const spriteMaterial = new THREE.SpriteMaterial(
         {
             map: new THREE.TextureLoader().load("img/planets/glow.png"),
-            useScreenCoordinates: false,
             color: 0xED5B0C,
             transparent: false,
             blending: THREE.AdditiveBlending,
@@ -203,6 +238,36 @@ function init() {
     sprite.scale.set(200, 200, 1.0);
     sun.add(sprite);
 
+
+    function randomInteger(min, max) {
+        let rand = min - 0.5 + Math.random() * (max - min + 1);
+        return Math.round(rand);
+    }
+
+    const getAsteroids = (amount, distanceFromAxis, angel) => {
+        const geometry = new THREE.Geometry();
+        const material = new THREE.PointsMaterial({
+            size: 5,
+            map: new THREE.TextureLoader().load("img/planets/meteor.png"),
+            depthTest: true,
+            transparent: false,
+            sizeAttenuation: false,
+            alphaTest: 0.9,
+        });
+        for (let i = 0; i < amount; i++) {
+            const t = Math.random() * angel;
+            const x = Math.cos(t) * distanceFromAxis  + randomInteger(0,10);
+            const y = 1.3 * Math.sin(t) * distanceFromAxis  + randomInteger(0,10);
+            geometry.vertices.push(new THREE.Vector3(x, y, randomInteger(-5, 5)));
+        }
+        const asteroids = new THREE.Points(geometry, material);
+        asteroids.rotation.x = Math.PI / 2;
+        scene.add(asteroids);
+    }
+    getAsteroids(300, 110, 2 * Math.PI);
+    getAsteroids(800, 280,  2 * Math.PI);
+
+    scene.add(new THREE.AxesHelper(50));
     function render(time) {
 
         if (resizeRendererToDisplay(renderer)) {
@@ -218,6 +283,7 @@ function init() {
         movePlanet(mars, marsData, time);
         movePlanet(jupiter, jupiterData, time);
         movePlanet(saturn, saturnData, time);
+        movePlanet(saturnRings, saturnData, time, true);
         movePlanet(uranus, uranusData, time);
         movePlanet(neptune, neptuneData, time);
         movePlanet(pluto, plutoData, time);

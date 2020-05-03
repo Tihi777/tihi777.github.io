@@ -67,7 +67,7 @@ const jupiterData = {
 }
 
 const saturnData = {
-    orbitRate: 10767.5,
+    orbitRate: 167.5,
     rotationRate: 0.015,
     distanceFromAxis: 180,
     name: "Earth",
@@ -75,6 +75,11 @@ const saturnData = {
     texture: "img/planets/saturn.jpg",
     size: earthSize / 0.1057,
     segments: planetSegments,
+    rings: {
+        innerRadius: earthSize / 0.1057 + 1,
+        outerRadius: earthSize / 0.1057 + 15,
+        size: 60,
+    },
 }
 
 const uranusData = {
