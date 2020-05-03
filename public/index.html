@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Solar System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+    html, body {
+        margin: 0;
+        height: 100%;
+    }
+    #canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+</style>
+<body>
+<div id="canvas"></div>
+<script type="x-shader/x-vertex" id="vertexShaderDEBRIS">
+		attribute float base_angle;
+		attribute float offsetX;
+		attribute float offsetZ;
+
+		uniform vec3 stretch;
+		uniform float time;
+
+		varying vec4 vUv;
+		varying vec2 offset;
+		void main()
+		{
+		    vec3 p = position;
+		   	offset = vec2(offsetX, offsetZ);
+	        p.x = (stretch.x + offsetX)*cos( base_angle + time );
+	        p.z = (stretch.z + offsetZ)*sin( base_angle + time );
+	        p.y += (stretch.y + offsetX/10.0)*cos( base_angle + time );
+
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+
+		    vUv = projectionMatrix * vec4(p, 1.0);
+		    gl_PointSize = 1.0;
+		}
+		</script>
+<script type="x-shader/x-fragment" id="fragmentShaderDEBRIS">
+		varying vec4 vUv;
+		varying vec2 offset;
+
+		uniform float shadowType;
+
+		void main() {
+			if( abs(offset.x) >= 30.0 || abs(offset.y) >= 10.0)
+				gl_FragColor = vec4(0.7, 0.7, 0.65, 0.90);
+			else
+				gl_FragColor = vec4(0.58, 0.49, 0.45, 0.90);
+
+			if((shadowType == 0.0 && vUv.z > 0.0) || (shadowType == 1.0 && vUv.z > 0.0 && abs(vUv.x) < 64.0))
+				gl_FragColor = gl_FragColor - vec4(vUv.zzz*0.0076, 0.0);
+
+		}
+		</script>
+<script src="../js/dat.gui.min.js"></script>
+<script src="../js/three.module.js"></script>
+<script src="../js/three.js"></script>
+<script src="../js/three.min.js"></script>
+<script src="../js/OrbitControls.js"></script>
+<script src="../../SolarSystem/src/planetData.js"></script>
+<script src="../../SolarSystem/src/satelliteData.js"></script>
+<script src="../../SolarSystem/src/main.js"></script>
+</body>
+</html>
