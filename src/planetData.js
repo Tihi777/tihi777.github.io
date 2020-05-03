@@ -6,7 +6,7 @@ const sunData = {
     distanceFromAxis: 0,
     name: "Sun",
     description: " ",
-    texture: "../img/planets/sun.jpg",
+    texture: "img/planets/sun.jpg",
     size: 40,
     segments: planetSegments,
 }
@@ -17,7 +17,7 @@ const mercuryData = {
     distanceFromAxis: 48,
     name: "Mercury",
     description: " ",
-    texture: "../img/planets/mercury.jpg",
+    texture: "img/planets/mercury.jpg",
     size: earthSize / 2.5,
     segments: planetSegments,
 }
@@ -28,7 +28,7 @@ const venusData = {
     distanceFromAxis: 62,
     name: "Mercury",
     description: " ",
-    texture: "../img/planets/venus.jpeg",
+    texture: "img/planets/venus.jpeg",
     size: earthSize / 2.1,
     segments: planetSegments,
 }
@@ -39,7 +39,7 @@ const earthData = {
     distanceFromAxis: 80,
     name: "Earth",
     description: " ",
-    texture: "../img/planets/earth.jpg",
+    texture: "img/planets/earth.jpg",
     size: earthSize,
     segments: planetSegments,
 }
@@ -50,7 +50,7 @@ const marsData = {
     distanceFromAxis: 100,
     name: "Mars",
     description: " ",
-    texture: "../img/planets/mars.jpg",
+    texture: "img/planets/mars.jpg",
     size: earthSize / 1.88,
     segments: planetSegments,
 }
@@ -61,7 +61,7 @@ const jupiterData = {
     distanceFromAxis: 130,
     name: "Earth",
     description: " ",
-    texture: "../img/planets/jupiter.svg",
+    texture: "img/planets/jupiter.svg",
     size: earthSize / 0.089,
     segments: planetSegments,
 }
@@ -72,7 +72,7 @@ const saturnData = {
     distanceFromAxis: 180,
     name: "Earth",
     description: " ",
-    texture: "../img/planets/saturn.jpg",
+    texture: "img/planets/saturn.jpg",
     size: earthSize / 0.1057,
     segments: planetSegments,
 }
@@ -83,7 +83,7 @@ const uranusData = {
     distanceFromAxis: 220,
     name: "Earth",
     description: " ",
-    texture: "../img/planets/uranus.png",
+    texture: "img/planets/uranus.png",
     size: earthSize / 0.249,
     segments: planetSegments,
 }
@@ -94,7 +94,7 @@ const neptuneData = {
     distanceFromAxis: 240,
     name: "Earth",
     description: " ",
-    texture: "../img/planets/neptune.png",
+    texture: "img/planets/neptune.png",
     size: earthSize / 0.2577,
     segments: planetSegments,
 }
@@ -105,7 +105,7 @@ const plutoData = {
     distanceFromAxis: 250,
     name: "Earth",
     description: " ",
-    texture: "../img/planets/pluto.jpg",
+    texture: "img/planets/pluto.jpg",
     size: earthSize / 4.25,
     segments: planetSegments,
 }

@@ -5,7 +5,7 @@ const moonData = {
     planet: earthData,
     name: "Moon",
     description: " ",
-    texture: "../img/planets/moon.jpg",
+    texture: "img/planets/moon.jpg",
     size: 0.5,
     segments: planetSegments,
 }

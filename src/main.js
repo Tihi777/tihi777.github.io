@@ -145,7 +145,7 @@ function init() {
     controls.minDistance = 2;
     controls.maxDistance = 999;
 
-    const path = '../img/cubemap/';
+    const path = 'img/cubemap/';
     const format = '.png';
     const urls = [
         path + 'right' + format,
@@ -192,7 +192,7 @@ function init() {
 
     const spriteMaterial = new THREE.SpriteMaterial(
         {
-            map: new THREE.TextureLoader().load("../img/planets/glow.png"),
+            map: new THREE.TextureLoader().load("img/planets/glow.png"),
             useScreenCoordinates: false,
             color: 0xED5B0C,
             transparent: false,
