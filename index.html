@@ -4,19 +4,68 @@
     <title>Solar System</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="src/main.css">
 </head>
-<style>
-    html, body {
-        margin: 0;
-        height: 100%;
-    }
-    #canvas {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-</style>
 <body>
+    <div class="control">
+        <p class="title">Солнечная система</p>
+        <div class="info">
+            <div class="info-title">
+                <p>Информация:</p>
+            </div>
+            <div class="row">
+                <p class="row-item">Объект:</p>
+                <p class="row-item" id="name">NaN</p>
+            </div>
+            <div class="row">
+                <div class="row-item">
+                    <p class="row-item">Радиус орбиты:</p>
+                    <p class="row-item" id="orbitRate">NaN</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="row-item">
+                    <p class="row-item">Период обращения:</p>
+                    <p class="row-item" id="rotationRate">NaN</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="row-item">
+                    <p class="row-item">Радиус:</p>
+                    <p class="row-item" id="radius">NaN</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="row-item">
+                    <p class="row-item">Масса:</p>
+                    <p class="row-item" id="mass">NaN</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="row-item">
+                    <p class="row-item">Температура:</p>
+                    <p class="row-item" id="temperature">NaN</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="row-item">
+                    <p class="row-item">Спутники:</p>
+                    <p class="row-item" id="moons">NaN</p>
+                </div>
+            </div>
+        </div>
+        <div class="planets">
+            <a class="label" >Солнце</a>
+            <a class="label" >Меркурий</a>
+            <a class="label" >Венера</a>
+            <a class="label" >Земля</a>
+            <a class="label" >Марс</a>
+            <a class="label" >Сатурн</a>
+            <a class="label" >Нептун</a>
+            <a class="label" >Уран</a>
+            <a class="label" >Плутон</a>
+        </div>
+    </div>
     <script id="vertexShader" type="x-shader/x-vertex">
       varying vec3 vPos;
 

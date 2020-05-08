@@ -1,0 +1,68 @@
+html, body {
+    font-family: "Century Gothic", sans-serif;
+    margin: 0;
+    height: 100%;
+    color: #ffffff;
+}
+
+p {
+    opacity: 0.6;
+}
+#canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.title {
+    position: absolute;
+    line-height: 48px;
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    opacity: 0.6;
+}
+.planets {
+    position: absolute;
+    text-align: center;
+    bottom: 25px;
+    width: 100%;
+    line-height: 48px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+.label {
+    margin-right: 20px;
+    font-size: 16px;
+}
+
+.label:hover {
+    color: cornflowerblue;
+}
+
+.info {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.3);
+    width: 250px;
+    height: 80%;
+    margin: 5px;
+}
+
+.info-title {
+    background: rgba(0, 0, 0, 0.2);
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+}
+
+.row {
+    padding: 5px;
+    font-size: 14px;
+}
+
+.row-item {
+    height: 30px;
+    margin: 0;
+    display: inline-block;
+}
