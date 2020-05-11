@@ -1,26 +1,13 @@
 let camera, scene, renderer, controls, canvas;
-
-const orbitData = {value: 200, runOrbit: true, runRotation: true};
-
-const resizeRendererToDisplay = renderer => {
-    const canvas = renderer.domElement;
-    const pixelRatio = window.devicePixelRatio;
-    const width = canvas.clientWidth * pixelRatio | 0;
-    const height = canvas.clientHeight * pixelRatio | 0;
-    const needResize = canvas.width !== width || canvas.height !== height;
-    if (needResize) {
-        renderer.setSize(width, height, false);
-    }
-    return needResize;
-}
+const planets = [];
 
 const getPointLight = (intensity, color) =>  {
     const light = new THREE.PointLight(color, intensity);
     light.castShadow = true;
-
     light.shadow.bias = 0.001;
     light.shadow.mapSize.width = 2048;
     light.shadow.mapSize.height = 2048;
+
     return light;
 }
 
@@ -32,10 +19,10 @@ const getSphere = (material, size, segments) => {
     return sphere ;
 }
 
-const getMaterial = (type, color, myTexture) => {
+const getMaterial = (type, color, texture) => {
     const materialOptions = {
         color: color === undefined ? 'rgb(255, 255, 255)' : color,
-        map: myTexture === undefined ? null : myTexture
+        map: texture === undefined ? null : texture
     };
 
     switch (type) {
@@ -52,21 +39,21 @@ const getMaterial = (type, color, myTexture) => {
     }
 }
 
-const movePlanet = (myPlanet, myData, myTime, stopRotation) => {
+const movePlanet = (planet, planetData, time, stopRotation) => {
     if (orbitData.runRotation && !stopRotation) {
-        myPlanet.rotation.y += myData.rotationRate;
+        planet.rotation.y += planetData.rotationRate;
     }
     if (orbitData.runOrbit) {
-        myPlanet.position.x = Math.cos(myTime * (1.0 / (myData.orbitRate * orbitData.value)) + 10.0) * myData.distanceFromAxis;
-        myPlanet.position.z = 1.3 * Math.sin(myTime * (1.0 / (myData.orbitRate * orbitData.value)) + 10.0) * myData.distanceFromAxis;
+        planet.position.x = Math.cos(time * (1.0 / (planetData.orbitRate * orbitData.value + 1)) + 10.0) * planetData.distanceFromAxis;
+        planet.position.z = 1.3 * Math.sin(time * (1.0 / (planetData.orbitRate * orbitData.value + 1)) + 10.0) * planetData.distanceFromAxis;
     }
 }
 
-const moveMoon = (satellite, planet, satelliteData, time) => {
-    movePlanet(satellite, satelliteData, time);
+const moveMoon = (moon, planet, moonData, time) => {
+    movePlanet(moon, moonData, time);
     if (orbitData.runOrbit) {
-        satellite.position.x = satellite.position.x + planet.position.x;
-        satellite.position.z = satellite.position.z + planet.position.z;
+        moon.position.x = moon.position.x + planet.position.x;
+        moon.position.z = moon.position.z + planet.position.z;
     }
 }
 
@@ -80,30 +67,27 @@ const setPlanetInfo = (planet, data) => {
     planet.moons = data.info.moons;
 }
 
-const loadTexturedPlanet = (data, x, y, z, materialType) => {
+const getPlanet = (planetData, x, y, z, materialType) => {
     let material;
-    let passThisTexture;
-    const loader = new THREE.TextureLoader();
+    let texture;
 
-    if (data.texture && data.texture !== "") {
-        passThisTexture = loader.load(data.texture);
+    if (planetData.texture) {
+        texture = new THREE.TextureLoader().load(planetData.texture);
     }
     if (materialType) {
-        material = getMaterial(materialType, "rgb(255, 255, 255 )", passThisTexture);
+        material = getMaterial(materialType, "rgb(255, 255, 255 )", texture);
     } else {
-        material = getMaterial("lambert", "rgb(255, 255, 255 )", passThisTexture);
+        material = getMaterial("lambert", "rgb(255, 255, 255 )", texture);
     }
     material.receiveShadow = true;
     material.castShadow = true;
 
-    const planet = getSphere(material, data.size, data.segments);
+    const planet = getSphere(material, planetData.size, planetData.segments);
     planet.receiveShadow = true;
 
-    if (data.info){
-        console.log(data.info);
-        setPlanetInfo(planet, data);
+    if (planetData.info) {
+        setPlanetInfo(planet, planetData);
     }
-
 
     scene.add(planet);
     planet.position.set(x, y, z);
@@ -111,7 +95,7 @@ const loadTexturedPlanet = (data, x, y, z, materialType) => {
     return planet;
 }
 
-const createRings = (innerRadius, outerRadius, size, texture, name, distanceFromAxis) => {
+const getRings = (innerRadius, outerRadius, size, texture, name, distanceFromAxis) => {
     const geometry = new THREE.RingGeometry(innerRadius, outerRadius, size);
     const ringTexture = new THREE.TextureLoader().load(texture);
     const material = new THREE.ShaderMaterial({
@@ -134,8 +118,8 @@ const createRings = (innerRadius, outerRadius, size, texture, name, distanceFrom
     return saturnRings;
 }
 
-const getSaturnRing = (saturnData) => {
-    return createRings(
+const getSaturnRings = (saturnData) => {
+    return getRings(
         saturnData.rings.innerRadius,
         saturnData.rings.outerRadius,
         saturnData.rings.size,
@@ -161,7 +145,7 @@ const getEllipse = (x, y, size, color, name, distanceFromAxis) => {
     return ellipse;
 };
 
-const createVisibleOrbits = (earthData) => {
+const getOrbits = (earthData) => {
     return getEllipse(
         0,
         0,
@@ -172,16 +156,11 @@ const createVisibleOrbits = (earthData) => {
     );
 }
 
-function randomInteger(min, max) {
-    let rand = min - 0.5 + Math.random() * (max - min + 1);
-    return Math.round(rand);
-}
-
-const getAsteroids = (amount, distanceFromAxis, angel) => {
+const createAsteroids = (amount, distanceFromAxis, angel) => {
     const geometry = new THREE.Geometry();
     const material = new THREE.PointsMaterial({
         size: 5,
-        map: new THREE.TextureLoader().load("img/planets/meteor.png"),
+        map: new THREE.TextureLoader().load("img/planets/asteroid.png"),
         depthTest: true,
         transparent: false,
         sizeAttenuation: false,
@@ -198,6 +177,28 @@ const getAsteroids = (amount, distanceFromAxis, angel) => {
     scene.add(asteroids);
 }
 
+const createStars = (amount, range) => {
+    const geometry = new THREE.BufferGeometry();
+    const vertices = [];
+    for ( let i = 0; i < amount; i ++ ) {
+        vertices.push( THREE.MathUtils.randFloatSpread( range ) );
+        vertices.push( THREE.MathUtils.randFloatSpread( range ) );
+        vertices.push( THREE.MathUtils.randFloatSpread( range ) );
+    }
+    geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+    const stars = new THREE.Points( geometry, new THREE.PointsMaterial( { color: 0x888888, sizeAttenuation: false, } ) );
+    scene.add( stars );
+}
+
+const showPlanetInfo = planet => {
+    document.getElementById("name").innerText = planet.name;
+    document.getElementById("mass").innerText = planet.mass;
+    document.getElementById("orbitRate").innerText = planet.orbitRate;
+    document.getElementById("rotationRate").innerText = planet.rotationRate;
+    document.getElementById("radius").innerText = planet.radius;
+    document.getElementById("temperature").innerText = planet.temperature;
+    document.getElementById("moons").innerText = planet.moons;
+}
 
 function init() {
     const fov = 45;
@@ -217,21 +218,18 @@ function init() {
     canvas = document.getElementById('canvas');
     canvas.appendChild(renderer.domElement);
 
-
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.minDistance = 60;
     controls.maxDistance = 999;
 
-    const path = 'img/cubemap/';
-    const format = '.png';
     const urls = [
-        path + 'right' + format,
-        path + 'left' + format,
-        path + 'top' + format,
-        path + 'bottom' + format,
-        path + 'front' + format,
-        path + 'back' + format,
-    ];
+       'img/cubemap/right.png',
+       'img/cubemap/left.png',
+       'img/cubemap/top.png',
+       'img/cubemap/bottom.png',
+       'img/cubemap/front.png',
+       'img/cubemap/back.png',
+    ]
     const reflectionCube = new THREE.CubeTextureLoader().load(urls);
     reflectionCube.format = THREE.RGBFormat;
     scene.background = reflectionCube;
@@ -242,80 +240,52 @@ function init() {
     const ambientLight = new THREE.AmbientLight(0xaaaaaa, 0.2);
     scene.add(ambientLight);
 
-    const planets = []
-    const sun = loadTexturedPlanet(sunData, sunData.distanceFromAxis, 0, 0, "basic");
-    const mercury = loadTexturedPlanet(mercuryData, mercuryData.distanceFromAxis, 0, 0);
-    const venus = loadTexturedPlanet(venusData, venusData.distanceFromAxis, 0, 0);
-    const earth = loadTexturedPlanet(earthData, earthData.distanceFromAxis, 0, 0);
-    const moon = loadTexturedPlanet(moonData, moonData.distanceFromAxis, 0, 0);
-    const mars = loadTexturedPlanet(marsData, marsData.distanceFromAxis, 0, 0);
-    const phobos = loadTexturedPlanet(phobosData, phobosData.distanceFromAxis, 0, 0);
-    const deimos = loadTexturedPlanet(deimosData, deimosData.distanceFromAxis, 0, 0);
-    const jupiter = loadTexturedPlanet(jupiterData, jupiterData.distanceFromAxis, 0, 0);
-    const saturn = loadTexturedPlanet(saturnData, saturnData.distanceFromAxis, 0, 0);
-    const saturnRings = getSaturnRing(saturnData);
-    const uranus = loadTexturedPlanet(uranusData, uranusData.distanceFromAxis, 0, 0);
-    const neptune = loadTexturedPlanet(neptuneData, neptuneData.distanceFromAxis, 0, 0);
-    const pluto = loadTexturedPlanet(plutoData, plutoData.distanceFromAxis, 0, 0);
+    const sun = getPlanet(sunData, sunData.distanceFromAxis, 0, 0, "basic");
+    const mercury = getPlanet(mercuryData, mercuryData.distanceFromAxis, 0, 0);
+    const venus = getPlanet(venusData, venusData.distanceFromAxis, 0, 0);
+    const earth = getPlanet(earthData, earthData.distanceFromAxis, 0, 0);
+    const moon = getPlanet(moonData, moonData.distanceFromAxis, 0, 0);
+    const mars = getPlanet(marsData, marsData.distanceFromAxis, 0, 0);
+    const phobos = getPlanet(phobosData, phobosData.distanceFromAxis, 0, 0);
+    const deimos = getPlanet(deimosData, deimosData.distanceFromAxis, 0, 0);
+    const jupiter = getPlanet(jupiterData, jupiterData.distanceFromAxis, 0, 0);
+    const saturn = getPlanet(saturnData, saturnData.distanceFromAxis, 0, 0);
+    const saturnRings = getSaturnRings(saturnData);
+    const uranus = getPlanet(uranusData, uranusData.distanceFromAxis, 0, 0);
+    const neptune = getPlanet(neptuneData, neptuneData.distanceFromAxis, 0, 0);
+    const pluto = getPlanet(plutoData, plutoData.distanceFromAxis, 0, 0);
 
     planets.push(sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto);
 
-    mercury.orbit = createVisibleOrbits(mercuryData);
-    venus.orbit = createVisibleOrbits(venusData);
-    earth.orbit = createVisibleOrbits(earthData);
-    mars.orbit = createVisibleOrbits(marsData);
-    jupiter.orbit = createVisibleOrbits(jupiterData);
-    saturn.orbit = createVisibleOrbits(saturnData);
-    uranus.orbit = createVisibleOrbits(uranusData);
-    neptune.orbit = createVisibleOrbits(neptuneData);
-    pluto.orbit = createVisibleOrbits(plutoData);
-    sun.orbit = createVisibleOrbits(sunData);
+    mercury.orbit = getOrbits(mercuryData);
+    venus.orbit = getOrbits(venusData);
+    earth.orbit = getOrbits(earthData);
+    mars.orbit = getOrbits(marsData);
+    jupiter.orbit = getOrbits(jupiterData);
+    saturn.orbit = getOrbits(saturnData);
+    uranus.orbit = getOrbits(uranusData);
+    neptune.orbit = getOrbits(neptuneData);
+    pluto.orbit = getOrbits(plutoData);
+    sun.orbit = getOrbits(sunData);
+
     const spriteMaterial = new THREE.SpriteMaterial(
         {
             map: new THREE.TextureLoader().load("img/planets/glow.png"),
             color: 0xED5B0C,
-            transparent: false,
+            transparent: true,
             blending: THREE.AdditiveBlending,
             depthWrite: false,
         });
     const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set(250, 250, 1.0);
+    sprite.scale.set(350, 350, 1.0);
     sun.add(sprite);
 
-    getAsteroids(300, 120, 2 * Math.PI);
-    getAsteroids(800, 315,  2 * Math.PI);
-
-    {
-        var geometry = new THREE.BufferGeometry();
-        var vertices = [];
-        for ( var i = 0; i < 10000; i ++ ) {
-            vertices.push( THREE.MathUtils.randFloatSpread( 3000 ) ); // x
-            vertices.push( THREE.MathUtils.randFloatSpread( 3000 ) ); // y
-            vertices.push( THREE.MathUtils.randFloatSpread( 3000 ) ); // z
-        }
-        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-        var particles = new THREE.Points( geometry, new THREE.PointsMaterial( { color: 0x888888, sizeAttenuation: false, } ) );
-        scene.add( particles );
-    }
-
-    const rayCaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-
-    const showPlanetInfo = planet => {
-        document.getElementById("name").innerText = planet.name;
-        document.getElementById("mass").innerText = planet.mass;
-        document.getElementById("orbitRate").innerText = planet.orbitRate;
-        document.getElementById("rotationRate").innerText = planet.rotationRate;
-        document.getElementById("radius").innerText = planet.radius;
-        document.getElementById("temperature").innerText = planet.temperature;
-        document.getElementById("moons").innerText = planet.moons;
-    }
+    createAsteroids(300, 120, 2 * Math.PI);
+    createAsteroids(800, 315,  2 * Math.PI);
+    createStars(10000, 3000);
 
     window.onload = function () {
         const a = document.getElementsByClassName('label');
-        console.log(a);
         for (let i = 0; i < a.length; i++) {
             a[i].onclick = function() {
                 showPlanetInfo(planets[i]);
@@ -324,7 +294,12 @@ function init() {
         }
     }
 
+    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+    const rayCaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
     let intersectedPlanet;
+
     function onDocumentMouseDown( event ) {
         event.preventDefault();
         mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
@@ -346,7 +321,7 @@ function init() {
 
                 intersectedPlanet.material.color.setHex( 0xaaaaaa );
                 intersectedPlanet.orbit.material.color.setHex( 0xaaaaaa);
-                showPlanetInfo(intersectedPlanet);
+                showPlanetInfo( intersectedPlanet );
             }
         } else {
             if ( intersectedPlanet ){
@@ -357,8 +332,6 @@ function init() {
         }
     }
 
-
-    scene.add(new THREE.AxesHelper(50));
     function render(time) {
 
         if (resizeRendererToDisplay(renderer)) {

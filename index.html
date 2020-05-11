@@ -4,7 +4,7 @@
     <title>Solar System</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="src/main.css">
+    <link rel="stylesheet" type="text/css" href="src/index.css">
 </head>
 <body>
     <div class="control">
@@ -15,43 +15,31 @@
             </div>
             <div class="row">
                 <p class="row-item">Объект:</p>
-                <p class="row-item" id="name">NaN</p>
+                <p class="row-item" id="name"></p>
             </div>
             <div class="row">
-                <div class="row-item">
-                    <p class="row-item">Радиус орбиты:</p>
-                    <p class="row-item" id="orbitRate">NaN</p>
-                </div>
+                <p class="row-item">Радиус орбиты:</p>
+                <p class="row-item" id="orbitRate"></p>
             </div>
             <div class="row">
-                <div class="row-item">
-                    <p class="row-item">Период обращения:</p>
-                    <p class="row-item" id="rotationRate">NaN</p>
-                </div>
+                <p class="row-item">Период обращения:</p>
+                <p class="row-item" id="rotationRate"></p>
             </div>
             <div class="row">
-                <div class="row-item">
-                    <p class="row-item">Радиус:</p>
-                    <p class="row-item" id="radius">NaN</p>
-                </div>
+                <p class="row-item">Радиус:</p>
+                <p class="row-item" id="radius"></p>
             </div>
             <div class="row">
-                <div class="row-item">
-                    <p class="row-item">Масса:</p>
-                    <p class="row-item" id="mass">NaN</p>
-                </div>
+                <p class="row-item">Масса:</p>
+                <p class="row-item" id="mass"></p>
             </div>
             <div class="row">
-                <div class="row-item">
-                    <p class="row-item">Температура:</p>
-                    <p class="row-item" id="temperature">NaN</p>
-                </div>
+                <p class="row-item">Температура:</p>
+                <p class="row-item" id="temperature"></p>
             </div>
             <div class="row">
-                <div class="row-item">
-                    <p class="row-item">Спутники:</p>
-                    <p class="row-item" id="moons">NaN</p>
-                </div>
+                <p class="row-item">Спутники:</p>
+                <p class="row-item" id="moons"></p>
             </div>
         </div>
         <div class="planets">
@@ -60,12 +48,14 @@
             <a class="label" >Венера</a>
             <a class="label" >Земля</a>
             <a class="label" >Марс</a>
+            <a class="label" >Юпитер</a>
             <a class="label" >Сатурн</a>
-            <a class="label" >Нептун</a>
             <a class="label" >Уран</a>
+            <a class="label" >Нептун</a>
             <a class="label" >Плутон</a>
         </div>
     </div>
+    <div id="canvas"></div>
     <script id="vertexShader" type="x-shader/x-vertex">
       varying vec3 vPos;
 
@@ -97,14 +87,15 @@
         gl_FragColor = color();
       }
     </script>
-    <div id="canvas"></div>
     <script src="js/dat.gui.min.js"></script>
     <script src="js/three.module.js"></script>
     <script src="js/three.js"></script>
     <script src="js/three.min.js"></script>
     <script src="js/OrbitControls.js"></script>
+    <script src="src/utils.js"></script>
     <script src="src/planetData.js"></script>
-    <script src="src/satelliteData.js"></script>
+    <script src="src/moonData.js"></script>
+    <script src="src/gui.js"></script>
     <script src="src/main.js"></script>
 </body>
 </html>
