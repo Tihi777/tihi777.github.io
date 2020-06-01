@@ -1,0 +1,23 @@
+{
+  "name": "tihi777.github.io",
+  "version": "1.0.0",
+  "description": "Model of the Solar system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tihi777/Tihi777.github.io.git"
+  },
+  "keywords": [
+    "javascript",
+    "three"
+  ],
+  "author": "Aleksandr <alexxellod@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tihi777/Tihi777.github.io/issues"
+  },
+  "homepage": "https://github.com/Tihi777/Tihi777.github.io#readme"
+}
