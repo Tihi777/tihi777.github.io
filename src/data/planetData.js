@@ -1,5 +1,5 @@
 const PLANET_SEGMENTS = 48;
-const PATH = "./src/img/planets/";
+const PATH = "../src/img/planets/";
 
 export const PLANETS = {
   sunData: {
@@ -13,7 +13,7 @@ export const PLANETS = {
     info: {
       orbitRate: "0 млн. км.",
       rotationRate: "0 дней",
-      radius: "695, 5 тыс. км",
+      radius: "695.5 тыс. км",
       mass: "1.9x10^30 кг",
       temperature: "5780K",
       moons: "нет",

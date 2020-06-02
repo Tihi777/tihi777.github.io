@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head><title>Solar System</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body><div class="control"><p class="title">Солнечная система</p><div class="info"><div class="info-title"><p>Информация:</p></div><div class="row"><p class="row-item">Объект:</p><p class="row-item" id="name"></p></div><div class="row"><p class="row-item">Радиус орбиты:</p><p class="row-item" id="orbitRate"></p></div><div class="row"><p class="row-item">Период обращения:</p><p class="row-item" id="rotationRate"></p></div><div class="row"><p class="row-item">Радиус:</p><p class="row-item" id="radius"></p></div><div class="row"><p class="row-item">Масса:</p><p class="row-item" id="mass"></p></div><div class="row"><p class="row-item">Температура:</p><p class="row-item" id="temperature"></p></div><div class="row"><p class="row-item">Спутники:</p><p class="row-item" id="moons"></p></div></div><div class="planets"><a class="label">Солнце</a> <a class="label">Меркурий</a> <a class="label">Венера</a> <a class="label">Земля</a> <a class="label">Марс</a> <a class="label">Юпитер</a> <a class="label">Сатурн</a> <a class="label">Уран</a> <a class="label">Нептун</a> <a class="label">Плутон</a></div></div><div id="canvas"></div><script id="vertexShader" type="x-shader/x-vertex">varying vec3 vPos;
+
+      void main() {
+        vPos = position;
+        vec3 viewPosition = (modelViewMatrix * vec4(position, 1.)).xyz;
+        gl_Position = projectionMatrix * vec4(viewPosition, 1.);
+      }</script><script id="fragmentShader" type="x-shader/x-fragment">uniform sampler2D texture;
+      uniform float innerRadius;
+      uniform float outerRadius;
+
+      varying vec3 vPos;
+
+      vec4 color() {
+        vec2 uv = vec2(0);
+        uv.x = (length(vPos) - innerRadius) / (outerRadius - innerRadius);
+        if (uv.x < 0.0 || uv.x > 1.0) {
+          discard;
+        }
+
+        vec4 pixel = texture2D(texture, uv);
+        return pixel;
+      }
+
+      void main() {
+        gl_FragColor = color();
+      }</script><script src="vendors~main.0b93a1f1d9a16a6f04d1.js"></script><script src="main.0b93a1f1d9a16a6f04d1.js"></script></body></html>

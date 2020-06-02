@@ -47,7 +47,7 @@ export const getSaturnRings = (saturnData) => {
     saturnData.rings.innerRadius,
     saturnData.rings.outerRadius,
     saturnData.rings.size,
-    "./src/img/planets/saturnRings.png",
+    "../src/img/planets/saturnRings.png",
     "Saturn rings",
     saturnData.distanceFromAxis
   );
@@ -72,7 +72,7 @@ export const createAsteroids = (amount, distanceFromAxis, angel) => {
   const geometry = new THREE.Geometry();
   const material = new THREE.PointsMaterial({
     size: 5,
-    map: new THREE.TextureLoader().load("./src/img/planets/asteroid.png"),
+    map: new THREE.TextureLoader().load("../src/img/planets/asteroid.png"),
     depthTest: true,
     transparent: false,
     sizeAttenuation: false,

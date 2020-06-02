@@ -57,12 +57,12 @@ function initialization() {
   controls.maxDistance = 999;
 
   const urls = [
-    "./src/img/cubemap/right.png",
-    "./src/img/cubemap/left.png",
-    "./src/img/cubemap/top.png",
-    "./src/img/cubemap/bottom.png",
-    "./src/img/cubemap/front.png",
-    "./src/img/cubemap/back.png",
+    "../src/img/cubemap/right.png",
+    "../src/img/cubemap/left.png",
+    "../src/img/cubemap/top.png",
+    "../src/img/cubemap/bottom.png",
+    "../src/img/cubemap/front.png",
+    "../src/img/cubemap/back.png",
   ];
   const cubeMap = new THREE.CubeTextureLoader().load(urls);
   cubeMap.format = THREE.RGBFormat;
@@ -114,7 +114,7 @@ function initialization() {
   sun.orbit = getOrbits(sunData);
 
   const spriteMaterial = new THREE.SpriteMaterial({
-    map: new THREE.TextureLoader().load("./src/img/planets/glow.png"),
+    map: new THREE.TextureLoader().load("../src/img/planets/glow.png"),
     color: 0xed5b0c,
     transparent: true,
     blending: THREE.AdditiveBlending,

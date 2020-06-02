@@ -1,7 +1,7 @@
 import { PLANETS } from "./planetData";
 const { earthData, marsData } = PLANETS;
 const MOON_SEGMENTS = 48;
-const PATH = "./src/img/planets/";
+const PATH = "../src/img/planets/";
 
 export const MOONS = {
   moonData: {
