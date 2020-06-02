@@ -1,3 +1,6 @@
+import * as THREE from "three";
+import { planets } from "../main";
+
 export const resizeRendererToDisplay = (renderer) => {
   const canvas = renderer.domElement;
   const pixelRatio = window.devicePixelRatio;

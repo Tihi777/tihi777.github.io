@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const getMaterial = (type, color, texture) => {
+export const getMaterial = (type, color, texture) => {
   const materialOptions = {
     color: color === undefined ? "rgb(255, 255, 255)" : color,
     map: texture === undefined ? null : texture,
