@@ -6,7 +6,7 @@ panel.close();
 panel.width = 370;
 
 export const orbitData = {
-  value: 200,
+  value: 0.5,
   runOrbit: true,
   runRotation: true,
   showOrbit: true,
@@ -18,7 +18,7 @@ const showOrbit = (v) => {
   });
 };
 
-panel.add(orbitData, "value", 10, 200, 1).name("Скорость вращения");
+panel.add(orbitData, "value", 0.5, 10, 0.01).name("Скорость вращения");
 panel.add(orbitData, "runOrbit").name("Вращать вокруг солнца");
 panel.add(orbitData, "runRotation").name("Вращать вокруг своей оси");
 panel.add(orbitData, "showOrbit").onChange(showOrbit).name("Отобразить орбиты");

@@ -7,12 +7,13 @@ export const movePlanet = (planet, planetData, time, stopRotation) => {
   if (orbitData.runOrbit) {
     planet.position.x =
       Math.cos(
-        time * (1.0 / (planetData.orbitRate * orbitData.value + 1)) + 10.0
+        time * (1.0 / (planetData.orbitRate * 100 + 1)) * orbitData.value
       ) * planetData.distanceFromAxis;
+
     planet.position.z =
       1.3 *
       Math.sin(
-        time * (1.0 / (planetData.orbitRate * orbitData.value + 1)) + 10.0
+        time * (1.0 / (planetData.orbitRate * 100 + 1)) * orbitData.value
       ) *
       planetData.distanceFromAxis;
   }
